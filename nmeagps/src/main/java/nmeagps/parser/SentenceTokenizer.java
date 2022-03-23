@@ -10,17 +10,20 @@ public class SentenceTokenizer {
 
   public static final double INVALID_FLOAT = Double.NaN;
 
+  private String originalSentence;
   private String[] fields;
   private int ptr;
 
   public void tokenize(String sentence) {
+    this.originalSentence = sentence;
+
     if (!sentence.startsWith("$")) {
-      throw new GPSParserException("The sentence does not start with $");
+      throw new GPSParserException("The sentence does not start with $", this);
     }
 
     int starIndex = sentence.indexOf("*", 1);
     if (starIndex < 0) {
-      throw new GPSParserException("The sentence does not have *");
+      throw new GPSParserException("The sentence does not contain *", this);
     }
 
     String contents = sentence.substring(1, starIndex);
@@ -28,11 +31,16 @@ public class SentenceTokenizer {
     int sum = contents.codePoints().reduce(0, (a, b) -> a ^ b) & 0xff;
     if (checksum != sum) {
       throw new GPSParserException(
-          String.format("The checksum %02X does not match the actual sum %02X", checksum, sum));
+          String.format("The checksum *%02X does not match the actual sum *%02X", checksum, sum),
+          this);
     }
 
-    fields = contents.split(",", -1);
-    ptr = 0;
+    this.fields = contents.split(",", -1);
+    this.ptr = 0;
+  }
+
+  public String toString() {
+    return String.format("{sentence=\"%s\",ptr=%d}", originalSentence, ptr);
   }
 
   public String[] getFields() {

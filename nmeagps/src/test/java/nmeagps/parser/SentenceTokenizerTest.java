@@ -1,6 +1,8 @@
 package nmeagps.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,5 +35,38 @@ class SentenceTokenizerTest {
     t.nextString();
     assertEquals(true, t.isEol());
     assertEquals("", t.nextString()); // default value
+  }
+
+  @Test
+  void testSyntaxErrorDollarSign() {
+    final String DATA = "hello, world";
+
+    SentenceTokenizer t = new SentenceTokenizer();
+    Exception e = assertThrows(GPSParserException.class, () -> {
+      t.tokenize(DATA);
+    });
+    assertTrue(e.getMessage().contains("does not start with $"));
+  }
+
+  @Test
+  void testSyntaxErrorStarSign() {
+    final String DATA = "$hello, world";
+
+    SentenceTokenizer t = new SentenceTokenizer();
+    Exception e = assertThrows(GPSParserException.class, () -> {
+      t.tokenize(DATA);
+    });
+    assertTrue(e.getMessage().contains("does not contain *"));
+  }
+
+  @Test
+  void testChecksumError() {
+    final String DATA = "$hello, world*FE";
+
+    SentenceTokenizer t = new SentenceTokenizer();
+    Exception e = assertThrows(GPSParserException.class, () -> {
+      t.tokenize(DATA);
+    });
+    assertTrue(e.getMessage().contains("*FE does not match the actual sum"));
   }
 }

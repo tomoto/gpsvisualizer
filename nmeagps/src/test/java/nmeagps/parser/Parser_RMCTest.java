@@ -1,6 +1,8 @@
 package nmeagps.parser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.ZoneId;
 
@@ -28,5 +30,20 @@ public class Parser_RMCTest {
       assertEquals("Autonomous", Trans.RMC.mode.get(d.mode));
       assertEquals("Caution", Trans.RMC.navStatus.get(d.navStatus));
     });
+  }
+
+  @Test
+  void testTypeMismatch() {
+    final String DATA = "$GPGSV,1,2,3*49";
+
+    SentenceTokenizer t = new SentenceTokenizer();
+    t.tokenize(DATA);
+    Exception e = assertThrows(GPSParserException.class, () -> {
+      new Parser_RMC().parse(t, d -> {
+        // dummy
+      });
+    });
+    System.out.println(e.getMessage());
+    assertTrue(e.getMessage().contains("Invalid sentence header"));
   }
 }

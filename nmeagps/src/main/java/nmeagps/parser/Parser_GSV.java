@@ -46,7 +46,7 @@ public class Parser_GSV extends AbstractSentenceParser<Record_GSV> {
         context.expectedNumMessages != numMessages ||
         context.expectedNumSatellites != numSatellites) {
       contextMap.remove(talker);
-      throw new GPSParserException("Inconsistent chunked message");
+      throw new GPSParserException("Inconsistent GSV message sequence is found and discarded", t);
     }
 
     while (t.peekInt() != SentenceTokenizer.INVALID_INT) {

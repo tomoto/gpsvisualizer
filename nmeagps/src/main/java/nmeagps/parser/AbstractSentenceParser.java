@@ -14,7 +14,10 @@ public abstract class AbstractSentenceParser<D extends AbstractRecord> {
   protected String checkTypeAndGetTalker(SentenceTokenizer t) {
     String header = t.nextString();
     if (!header.endsWith(type)) {
-      throw new GPSParserException("Invalid sentence type");
+      // possibly the parent parser's bug
+      throw new GPSParserException(
+          String.format("Invalid sentence header: xx%s is expected but got %s", type, header),
+          t);
     }
     return header.substring(0, 2);
   }

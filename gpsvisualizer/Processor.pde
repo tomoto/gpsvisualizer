@@ -1,3 +1,6 @@
+import nmeagps.SimpleGPSAggregator;
+import nmeagps.parser.GPSParserException;
+
 class Processor {
   private SimpleGPSAggregator aggeragor = new SimpleGPSAggregator();
   
@@ -7,27 +10,27 @@ class Processor {
   Degrees lng;
   double altitude;
   Date dateTime;
-
-  void processMessage(String s) {
+  
+  void process(String s) {
     try {
-      //System.out.println(s.trim());
+      if (Config.LOG_SENTENCES) {
+        System.out.println(s.trim());
+      }
+      
       aggeragor.parse(s);
       
       Set<String> talkers = aggeragor.getTalkers();
       
       for (String talker : talkers) {
         List<SatelliteView> views = aggeragor.getResult(talker).satelliteViews; 
-        if (views != null) {
-          satelliteViews.put(talker, views);
-        }
         List<Integer> used = aggeragor.getResult(talker).satellitesUsed;
-        if (used != null) {
-          satellitesUsed.put(talker, used);
+        if (views != null || used != null) {
+          satelliteViews.put(talker, views != null ? views : Collections.EMPTY_LIST);
+          satellitesUsed.put(talker, used != null ? used : Collections.EMPTY_LIST);
         }
       }
       
-      // Perhaps "GN" should be the most reliable
-      SimpleGPSAggregator.Result result = aggeragor.getResult("GN");
+      SimpleGPSAggregator.Result result = aggeragor.getResult(Config.PRIMARY_TAKER);
       if (result != null) {
         lat = result.lat;
         lng = result.lng;
@@ -35,7 +38,13 @@ class Processor {
         dateTime = result.dateTime;
       }
       
-    } catch (Exception e) {
+    } catch(GPSParserException e) {
+      // parse error
+      // log the message only because it may be temporary
+      System.err.println(e);
+    } catch(Exception e) {
+      // other errors
+      // log the full stack trace because it is unexpected
       e.printStackTrace();
     }
   }
