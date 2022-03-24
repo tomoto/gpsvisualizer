@@ -22,37 +22,13 @@ import nmeagps.parser.Parser_VTG;
 import nmeagps.parser.Parser_ZDA;
 import nmeagps.parser.SentenceTokenizer;
 
+/**
+ * Generic NMEA GPS message parser. The application should set up the handlers
+ * upfront and call `parse` with the incoming messages, then the handlers will
+ * be called with the parsed data.
+ */
 public class GPSParser {
   public final SentenceTokenizer tokenizer = new SentenceTokenizer();
-
-  class ParserHandlerMap {
-    class Entry<D extends AbstractRecord> {
-      final AbstractSentenceParser<D> parser;
-      final Consumer<D> handler;
-
-      Entry(AbstractSentenceParser<D> parser, Consumer<D> handler) {
-        this.parser = parser;
-        this.handler = handler;
-      }
-
-      void parse(SentenceTokenizer tokenizer) {
-        parser.parse(tokenizer, handler);
-      }
-    }
-
-    private Map<String, Entry<?>> map = new HashMap<>();
-
-    <D extends AbstractRecord> void put(
-        AbstractSentenceParser<D> parser,
-        Consumer<D> handler) {
-      map.put(parser.type, new Entry<D>(parser, handler));
-    }
-
-    Entry<?> get(String key) {
-      return map.get(key);
-    }
-  }
-
   private final ParserHandlerMap parserHandlerMap = new ParserHandlerMap();
 
   public void setHandler_GGA(Consumer<Record_GGA> handler) {
@@ -92,5 +68,33 @@ public class GPSParser {
     if (entry != null && entry.handler != null) {
       entry.parse(tokenizer);
     }
+  }
+}
+
+class ParserHandlerMap {
+  public static class Entry<D extends AbstractRecord> {
+    public final AbstractSentenceParser<D> parser;
+    public final Consumer<D> handler;
+
+    public Entry(AbstractSentenceParser<D> parser, Consumer<D> handler) {
+      this.parser = parser;
+      this.handler = handler;
+    }
+
+    public void parse(SentenceTokenizer tokenizer) {
+      parser.parse(tokenizer, handler);
+    }
+  }
+
+  private Map<String, Entry<?>> map = new HashMap<>();
+
+  public <D extends AbstractRecord> void put(
+      AbstractSentenceParser<D> parser,
+      Consumer<D> handler) {
+    map.put(parser.type, new Entry<D>(parser, handler));
+  }
+
+  public Entry<?> get(String key) {
+    return map.get(key);
   }
 }

@@ -18,8 +18,8 @@ public class Parser_GLLTest {
       assertEquals("37\u00b0 23.2475' N", d.lat.toString());
       assertEquals("121\u00b0 58.3416' W", d.lng.toString());
       assertEquals("161229.487", d.timeString);
-      assertEquals("Active", Trans.RMC.status.get(d.status));
-      assertEquals("Autonomous", Trans.RMC.mode.get(d.mode));
+      assertEquals("Active", Trans.GLL.status.get(d.status));
+      assertEquals("Autonomous", Trans.GLL.mode.get(d.mode));
     });
   }
 }
