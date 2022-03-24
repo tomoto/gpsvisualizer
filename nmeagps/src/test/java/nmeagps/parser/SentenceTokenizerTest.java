@@ -21,20 +21,8 @@ class SentenceTokenizerTest {
     assertEquals(-1, t.nextInt());
     assertEquals(200322, t.nextInt());
     assertEquals("N", t.nextString());
-  }
-
-  @Test
-  void testIsEol() {
-    final String DATA = "$A,B,C*40\r\n";
-
-    SentenceTokenizer t = new SentenceTokenizer();
-    t.tokenize(DATA);
-    t.nextString();
-    t.nextString();
-    assertEquals(false, t.isEol());
-    t.nextString();
-    assertEquals(true, t.isEol());
-    assertEquals("", t.nextString()); // default value
+    assertEquals("", t.nextString()); // eol, default value
+    assertEquals(666, t.nextIntWithDefault(666)); // eol, default value
   }
 
   @Test

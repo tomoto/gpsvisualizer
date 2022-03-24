@@ -26,6 +26,7 @@ public class Degrees {
   }
 
   public String toString() {
-    return String.format("%d\u00b0 %.4f\' %s", getDegInt(), getMinFloat(), direction);
+    return String.format("%d\u00b0 %.4f\' %s",
+        getDegInt(), getMinFloat(), direction);
   }
 }

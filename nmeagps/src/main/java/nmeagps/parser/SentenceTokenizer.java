@@ -7,7 +7,6 @@ public class SentenceTokenizer {
   // assume int is usually unsigned and we can use -1 to mean no value,
   // unless explicitly specified
   public static final int INVALID_INT = -1;
-
   public static final double INVALID_FLOAT = Double.NaN;
 
   private String originalSentence;
@@ -79,12 +78,8 @@ public class SentenceTokenizer {
     return next(this::peekFloat);
   }
 
-  public boolean isEol() {
-    return ptr == fields.length;
-  }
-
   private <T> T peekWithDefault(Function<String, T> f, T defaultValue) {
-    if (isEol()) {
+    if (ptr >= fields.length) {
       return defaultValue;
     }
 

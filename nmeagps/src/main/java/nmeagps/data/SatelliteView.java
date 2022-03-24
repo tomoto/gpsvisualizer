@@ -18,6 +18,7 @@ public class SatelliteView {
   }
 
   public String toString() {
-    return String.format("{id:%d,elevation:%d,azimuth:%d,snr:%d}", id, elevation, azimuth, snr);
+    return String.format("{id:%d,elevation:%d,azimuth:%d,snr:%d}",
+        id, elevation, azimuth, snr);
   }
 }

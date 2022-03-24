@@ -9,6 +9,14 @@ import nmeagps.data.Degrees;
 import nmeagps.data.SatelliteView;
 import nmeagps.data.Trans;
 
+/**
+ * Simple convenient tool to track the basic information from NMEA GPS messages.
+ * The application should create this object and call `parse` with the incoming
+ * messages, then the basic information (such as location, speed, and satellites
+ * in the view) will be extracted and maintained in `Result`. Because the
+ * messages may come from different systems ("talkers"), `Result` will be kept
+ * for each of those talkers separately.
+ */
 public class SimpleGPSAggregator {
   public static class Result {
     // from RMC

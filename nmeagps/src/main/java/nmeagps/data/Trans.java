@@ -5,12 +5,14 @@ import java.util.Map;
 import nmeagps.util.HashMapWithDefault;
 import nmeagps.util.MapBuilder;
 
+/**
+ * Translates varous codes used in the messages to human readable texts
+ */
 public class Trans {
   private static <K> MapBuilder<K, String> mapBuilder(K dummyKey) {
     return new MapBuilder<>(new HashMapWithDefault<K, String>("Unknown"));
   }
 
-  // use this for GLL's status and mode also
   public static class RMC {
     public static final Map<String, String> status = mapBuilder("")
         .add("A", "Active")
@@ -38,8 +40,13 @@ public class Trans {
 
   }
 
+  public static class GLL {
+    public static final Map<String, String> mode = RMC.mode; // borrow
+    public static final Map<String, String> status = RMC.status; // borrow
+  }
+
   public static class GGA {
-    public static final Map<Integer, String> fixQuality = mapBuilder(1)
+    public static final Map<Integer, String> fixQuality = mapBuilder(0)
         .add(0, "Invalid")
         .add(1, "Standard position service")
         .add(2, "Differential GPS")
@@ -59,7 +66,7 @@ public class Trans {
         .add("A", "Automatic")
         .build();
 
-    public static final Map<Integer, String> mode2 = mapBuilder(1)
+    public static final Map<Integer, String> mode2 = mapBuilder(0)
         .add(1, "Not available")
         .add(2, "2D")
         .add(3, "3D")
@@ -67,6 +74,6 @@ public class Trans {
   }
 
   public static class VTG {
-    public static final Map<String, String> mode = RMC.mode;
+    public static final Map<String, String> mode = RMC.mode; // borrow
   }
 }
